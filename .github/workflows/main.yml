@@ -9,19 +9,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: 安装依赖
         run: |
           sudo apt-get update
           sudo apt-get install -y cmake g++ libssl-dev libsdl2-dev
 
-      - name: Build
+      - name: 编译
         run: |
           mkdir build && cd build
           cmake .. -DENABLE_WEBRTC=ON
           cmake --build . -j$(nproc)
 
-      - name: Upload binary
+      - name: 打包
+        run: |
+          mkdir dist
+          cp build/release/linux/Release/MediaServer dist/
+          tar -czf ZLMediaKit-linux.tar.gz -C dist .
+
+      - name: 上传产物
         uses: actions/upload-artifact@v4
         with:
           name: MediaServer
-          path: build/release/linux/Release/MediaServer
+          path: ZLMediaKit-linux.tar.gz
