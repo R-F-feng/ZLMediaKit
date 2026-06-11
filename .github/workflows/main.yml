@@ -1,0 +1,27 @@
+name: Build ZLMediaKit
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake g++ libssl-dev libsdl2-dev
+
+      - name: Build
+        run: |
+          mkdir build && cd build
+          cmake .. -DENABLE_WEBRTC=ON
+          cmake --build . -j$(nproc)
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: MediaServer
+          path: build/release/linux/Release/MediaServer
